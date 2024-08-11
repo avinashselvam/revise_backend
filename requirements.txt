@@ -1,2 +1,4 @@
 openai
 flask
+flask_cors
+gunicorn==19.7.1
