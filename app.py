@@ -50,8 +50,7 @@ def get_questions():
         data = get_questions_and_evaluations_from_open_ai(topic, difficulty, submission)
     
     # return data
-    
-    print(data.model_dump_json())
+    # print(data.model_dump_json())
 
     return jsonify(data.model_dump())
     
