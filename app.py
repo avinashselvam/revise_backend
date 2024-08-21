@@ -25,6 +25,10 @@ def upload_qa_to_firestore(session_id, difficulty, questions, answers):
 def upload_topic_to_firestore(session_id, topic):
     doc_ref.document(session_id).set({'topic': topic})
 
+@app.get("/healthcheck")
+def get_status():
+    return "OK", 200
+
 @app.post("/question")
 def get_questions():
 
