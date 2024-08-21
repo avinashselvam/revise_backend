@@ -15,6 +15,23 @@ class Status(str, Enum):
 class Question(BaseModel):
 	subtopic: str
 	question: str
+	
+class CorrectOption(str, Enum):
+	a = "a"
+	b = "b"
+	c = "c"
+	d = "d"
+
+class Options(BaseModel):
+	a: str
+	b: str
+	c: str
+	d: str
+	
+class MCQQuestion(BaseModel):
+	question: str
+	options: Options
+	correctoption: CorrectOption
 
 class Evaluation(BaseModel):
 	status: Status
@@ -22,11 +39,28 @@ class Evaluation(BaseModel):
 	reason_if_wrong: str
 	
 class TypeOneResponse(BaseModel):
-	questions: List[Question]
+	questions: List[MCQQuestion]
 
 class TypeTwoResponse(BaseModel):
 	evaluations: List[Evaluation]
 	questions: List[Question]
+
+def get_mcq_questions_from_open_ai(topic, difficulty):
+
+    prompt = f"I want to revise {topic} at increasing levels of difficulty from 1 to 4. Ask me 5 varied mcq questions with 4 options and the correct answer from the topic with difficulty level {difficulty}. response should be in json format."
+
+    completion = client.beta.chat.completions.parse(
+        model=MODEL,
+        messages=[
+            {"role": "user", "content": prompt}
+        ],
+        temperature=0.7,
+        response_format=TypeOneResponse
+    )
+
+    output = completion.choices[0].message.parsed
+	
+    return output
 
 def get_questions_from_open_ai(topic):
 

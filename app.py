@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from utils import get_questions_from_open_ai, get_questions_and_evaluations_from_open_ai
+from utils import get_mcq_questions_from_open_ai
 from uuid import uuid4
 
 from firebase_admin import initialize_app, credentials, firestore
@@ -37,21 +37,23 @@ def get_questions():
 
     if payload_type == 1:
         topic = payload['topic']
-        data = get_questions_from_open_ai(topic)
+        # data = get_questions_from_open_ai(topic)
+        data = get_mcq_questions_from_open_ai(topic, 1)
         session_id = str(uuid4())
         response = {**data.model_dump(), 'sessionId': session_id}
-        upload_topic_to_firestore(session_id, topic)
+        # upload_topic_to_firestore(session_id, topic)
 
     elif payload_type == 2:
         topic = payload['topic']
         session_id = payload['sessionId']
         difficulty = payload['difficulty']
-        questions = payload['questions']
-        answers = payload['answers']
-        submission = "\n".join([f"{question}\n{answer}" for question, answer in zip(questions, answers)])
-        data = get_questions_and_evaluations_from_open_ai(topic, difficulty, submission)
+        # questions = payload['questions']
+        # answers = payload['answers']
+        # submission = "\n".join([f"{question}\n{answer}" for question, answer in zip(questions, answers)])
+        # data = get_questions_and_evaluations_from_open_ai(topic, difficulty, submission)
+        data = get_mcq_questions_from_open_ai(topic, difficulty)
         response = data.model_dump()
-        upload_qa_to_firestore(session_id, difficulty, questions, answers)
+        # upload_qa_to_firestore(session_id, difficulty, questions, answers)
 
     return jsonify(response)
 
